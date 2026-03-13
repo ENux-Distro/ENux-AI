@@ -49,7 +49,6 @@ npm-install:
 # ─── Make script executable ───────────────────────────────────────────────────
 chmod:
 	@chmod +x $(SCRIPT)
-	@cp helpers/enux-ai /usr/bin
 
 # ─── Run the chatbot ──────────────────────────────────────────────────────────
 run: chmod
