@@ -49,9 +49,14 @@ const ENUX_SOURCES = [
     reddit: true, // parse Reddit JSON API
   },
   {
-    label: "Distrowatch",
+    label: "distrowatch.com",
     url: "https://distrowatch.com/table.php?distribution=enux",
   },
+  {
+    label: "GitHub Releases",
+    url: "https://github.com/ENux-Distro/ENux/releases",
+  },
+
 ];
 
 // Keywords that trigger an ENux web lookup before answering.
@@ -260,20 +265,20 @@ function printBox(title, lines, color = chalk.white) {
 function printBanner() {
   console.clear();
   console.log();
-  console.log(chalk.bold.green("  ███████╗███╗   ██╗██╗   ██╗██╗  ██╗"));
-  console.log(chalk.bold.green("  ██╔════╝████╗  ██║██║   ██║╚██╗██╔╝"));
-  console.log(chalk.bold.green("  █████╗  ██╔██╗ ██║██║   ██║ ╚███╔╝ "));
-  console.log(chalk.bold.green("  ██╔══╝  ██║╚██╗██║██║   ██║ ██╔██╗ "));
-  console.log(chalk.bold.green("  ███████╗██║ ╚████║╚██████╔╝██╔╝ ██╗"));
-  console.log(chalk.bold.green("  ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝"));
+  console.log(chalk.bold.black("  ███████╗███╗   ██╗██╗   ██╗██╗  ██╗"));
+  console.log(chalk.bold.black("  ██╔════╝████╗  ██║██║   ██║╚██╗██╔╝"));
+  console.log(chalk.bold.black("  █████╗  ██╔██╗ ██║██║   ██║ ╚███╔╝ "));
+  console.log(chalk.bold.black("  ██╔══╝  ██║╚██╗██║██║   ██║ ██╔██╗ "));
+  console.log(chalk.bold.black("  ███████╗██║ ╚████║╚██████╔╝██╔╝ ██╗"));
+  console.log(chalk.bold.black("  ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝"));
   console.log();
   console.log(
-    chalk.dim("  ") + chalk.green("Linux AI Assistant") +
+    chalk.dim("  ") + chalk.green("ENux AI Chatbot") +
     chalk.dim("  ·  Ollama + qwen2.5  ·  web-aware")
   );
   console.log(
     chalk.dim("  v5.1.1-pre  ·  ") +
-    chalk.cyan("ENux questions → live web lookup") +
+    chalk.bold.cyan("ENux questions → live web lookup") +
     chalk.dim("  ·  /help for commands")
   );
   console.log();
