@@ -53,10 +53,9 @@ const ENUX_SOURCES = [
     url: "https://distrowatch.com/table.php?distribution=enux",
   },
   {
-    label: "GitHub Releases",
-    url: "https://github.com/ENux-Distro/ENux/releases",
+    label: "github releases (5.0.1)",
+    url: "https://github.com/ENux-Distro/ENux/releases/",
   },
-
 ];
 
 // Keywords that trigger an ENux web lookup before answering.
@@ -265,20 +264,20 @@ function printBox(title, lines, color = chalk.white) {
 function printBanner() {
   console.clear();
   console.log();
-  console.log(chalk.bold.black("  ███████╗███╗   ██╗██╗   ██╗██╗  ██╗"));
-  console.log(chalk.bold.black("  ██╔════╝████╗  ██║██║   ██║╚██╗██╔╝"));
-  console.log(chalk.bold.black("  █████╗  ██╔██╗ ██║██║   ██║ ╚███╔╝ "));
-  console.log(chalk.bold.black("  ██╔══╝  ██║╚██╗██║██║   ██║ ██╔██╗ "));
-  console.log(chalk.bold.black("  ███████╗██║ ╚████║╚██████╔╝██╔╝ ██╗"));
-  console.log(chalk.bold.black("  ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝"));
+  console.log(chalk.bold.green("  ███████╗███╗   ██╗██╗   ██╗██╗  ██╗"));
+  console.log(chalk.bold.green("  ██╔════╝████╗  ██║██║   ██║╚██╗██╔╝"));
+  console.log(chalk.bold.green("  █████╗  ██╔██╗ ██║██║   ██║ ╚███╔╝ "));
+  console.log(chalk.bold.green("  ██╔══╝  ██║╚██╗██║██║   ██║ ██╔██╗ "));
+  console.log(chalk.bold.green("  ███████╗██║ ╚████║╚██████╔╝██╔╝ ██╗"));
+  console.log(chalk.bold.green("  ╚══════╝╚═╝  ╚═══╝ ╚═════╝ ╚═╝  ╚═╝"));
   console.log();
   console.log(
-    chalk.dim("  ") + chalk.green("ENux AI Chatbot") +
+    chalk.dim("  ") + chalk.green("Linux AI Assistant") +
     chalk.dim("  ·  Ollama + qwen2.5  ·  web-aware")
   );
   console.log(
     chalk.dim("  v5.1.1-pre  ·  ") +
-    chalk.bold.cyan("ENux questions → live web lookup") +
+    chalk.cyan("ENux questions → live web lookup") +
     chalk.dim("  ·  /help for commands")
   );
   console.log();
