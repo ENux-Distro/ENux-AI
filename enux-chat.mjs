@@ -49,11 +49,11 @@ const ENUX_SOURCES = [
     reddit: true, // parse Reddit JSON API
   },
   {
-    label: "distrowatch.com",
+    label: "Distrowatch.com",
     url: "https://distrowatch.com/table.php?distribution=enux",
   },
   {
-    label: "github releases (5.0.1)",
+    label: "GitHub Releases",
     url: "https://github.com/ENux-Distro/ENux/releases/",
   },
 ];
