@@ -14,6 +14,7 @@ NODE    = node
 all: check-node install-ollama pull-model npm-install chmod
 	@echo ""
 	@echo "  ENux AI is ready. Run with: make run"
+	@echo "  Or run make web for the WebUI"
 	@echo ""
 
 # ─── Check Node.js >= 18 ──────────────────────────────────────────────────────
