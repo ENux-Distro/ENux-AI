@@ -13,7 +13,7 @@ NODE    = node
 # ─── Default target ───────────────────────────────────────────────────────────
 all: check-node install-ollama pull-model npm-install chmod
 	@mkdir /usr/share/ENux-AI
-	@cp . /usr/share/ENux-AI
+	@cp . -r /usr/share/ENux-AI
 	@echo ""
 	@echo "  ENux AI is ready. Run with: make run"
 	@echo "  Or run make web for the WebUI"
