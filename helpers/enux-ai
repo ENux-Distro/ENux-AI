@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# A simple wrapper for ENux AI 
+
+case "$1" in
+  "" )
+    /usr/share/enux-ai.mjs
+    ;;
+
+  --web )
+    /usr/share/server.mjs
+    ;;
+esac
