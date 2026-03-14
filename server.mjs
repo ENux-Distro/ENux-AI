@@ -33,6 +33,7 @@ const ENUX_SOURCES = [
   { label: "github.com/ENux-Distro",   url: "https://raw.githubusercontent.com/ENux-Distro/ENux/main/README.md", raw: true },
   { label: "r/ENux",                   url: "https://www.reddit.com/r/ENux/.json?limit=5", reddit: true },
   { label: "distrowatch.com",          url: "https://distrowatch.com/table.php?distribution=enux" },
+  { label: "github releases",  url: "https://github.com/ENux-Distro/ENux/releases/" },
 ];
 
 const ENUX_KEYWORDS = [
