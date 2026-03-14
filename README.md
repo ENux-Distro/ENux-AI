@@ -15,6 +15,6 @@ This AI is suitable for daily talking, coding and talking about ENux
 ## How to Install
 
 - Install nodejs by running `apt install nodejs`
-- Run `make`
+- Run `sudo make`
 - To use ENux AI, run `enux-ai`
 - **Enjoy**
