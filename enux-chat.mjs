@@ -49,7 +49,7 @@ const ENUX_SOURCES = [
     reddit: true, // parse Reddit JSON API
   },
   {
-    label: "distrowatch.com",
+    label: "Distrowatch",
     url: "https://distrowatch.com/table.php?distribution=enux",
   },
 ];
