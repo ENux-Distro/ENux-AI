@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ENux AI</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@300;400;500&family=Geist:wght@300;400;500&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:        #0c0e0d;
+    --bg2:       #111412;
+    --bg3:       #181b19;
+    --bg4:       #1e2320;
+    --border:    #252c27;
+    --green:     #00c896;
+    --green-dim: #00835f;
+    --green-bg:  #0a1f16;
+    --text:      #d4e8df;
+    --text-dim:  #5a7a68;
+    --text-mute: #2e4038;
+    --red:       #ff5555;
+    --radius:    12px;
+  }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Geist', sans-serif;
+    font-size: 15px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Layout ── */
+  #app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  /* ── Header ── */
+  #header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  #header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  #logo {
+    width: 34px;
+    height: 34px;
+    border-radius: 9px;
+    background: var(--green-bg);
+    border: 1px solid var(--green-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Geist Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--green);
+    letter-spacing: 0.03em;
+  }
+
+  #title {
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  #subtitle {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 1px;
+    font-family: 'Geist Mono', monospace;
+  }
+
+  #status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-family: 'Geist Mono', monospace;
+    color: var(--text-dim);
+  }
+
+  #status-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--text-mute);
+    transition: background 0.3s;
+  }
+  #status-dot.ok  { background: var(--green); }
+  #status-dot.err { background: var(--red); }
+
+  /* ── Messages ── */
+  #messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 32px 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+    scroll-behavior: smooth;
+  }
+
+  #messages::-webkit-scrollbar { width: 3px; }
+  #messages::-webkit-scrollbar-track { background: transparent; }
+  #messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ── Empty state ── */
+  #empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    text-align: center;
+    padding-bottom: 60px;
+    animation: fadeUp 0.4s ease;
+  }
+
+  #empty-logo {
+    font-family: 'Geist Mono', monospace;
+    font-size: 42px;
+    font-weight: 500;
+    color: var(--green);
+    letter-spacing: -2px;
+    line-height: 1;
+  }
+
+  #empty-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    max-width: 320px;
+    line-height: 1.7;
+  }
+
+  #suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    max-width: 500px;
+  }
+
+  .suggestion {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+    font-family: 'Geist Mono', monospace;
+  }
+  .suggestion:hover {
+    border-color: var(--green-dim);
+    color: var(--green);
+    background: var(--green-bg);
+  }
+
+  /* ── Message rows ── */
+  .msg-row {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    animation: fadeUp 0.2s ease;
+  }
+
+  .msg-row.user { flex-direction: row-reverse; }
+
+  .avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 500;
+    flex-shrink: 0;
+    margin-top: 2px;
+    font-family: 'Geist Mono', monospace;
+  }
+
+  .avatar.ai   { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-dim); }
+  .avatar.user { background: var(--bg3); color: var(--text-dim); border: 1px solid var(--border); }
+
+  .bubble {
+    max-width: 82%;
+    padding: 12px 16px;
+    border-radius: 4px 14px 14px 14px;
+    font-size: 14px;
+    line-height: 1.7;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text);
+  }
+
+  .msg-row.user .bubble {
+    background: var(--green-bg);
+    border-color: #1a3d2a;
+    border-radius: 14px 4px 14px 14px;
+    color: #c0e8d0;
+  }
+
+  /* Markdown inside bubbles */
+  .bubble code {
+    font-family: 'Geist Mono', monospace;
+    font-size: 12.5px;
+    background: #0a1410;
+    border: 1px solid #1e3028;
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: #7fffb8;
+  }
+
+  .bubble pre {
+    background: #0a1410;
+    border: 1px solid #1e3028;
+    border-radius: 8px;
+    padding: 14px 16px;
+    margin: 10px 0;
+    overflow-x: auto;
+    font-family: 'Geist Mono', monospace;
+    font-size: 12.5px;
+    color: #7fffb8;
+    line-height: 1.6;
+  }
+
+  .bubble pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    color: inherit;
+  }
+
+  .bubble p  { margin-bottom: 8px; }
+  .bubble p:last-child { margin-bottom: 0; }
+  .bubble ul, .bubble ol { padding-left: 20px; margin: 6px 0; }
+  .bubble li { margin: 3px 0; }
+  .bubble strong { color: #e0f4ea; font-weight: 500; }
+  .bubble h1, .bubble h2, .bubble h3 {
+    color: #e0f4ea;
+    font-weight: 500;
+    margin: 12px 0 6px;
+    font-size: 14px;
+  }
+
+  /* Cursor */
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 14px;
+    background: var(--green);
+    margin-left: 2px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  /* ── Search status bar ── */
+  #search-bar {
+    display: none;
+    margin: 0 24px 8px;
+    padding: 8px 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'Geist Mono', monospace;
+    color: var(--text-dim);
+    gap: 10px;
+    align-items: center;
+    animation: fadeUp 0.2s ease;
+  }
+  #search-bar.visible { display: flex; }
+
+  .search-source {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+  }
+  .search-source .dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--text-mute);
+  }
+  .search-source.ok  .dot { background: var(--green); }
+  .search-source.err .dot { background: var(--red); }
+
+  /* ── Error banner ── */
+  #error-bar {
+    display: none;
+    margin: 0 24px 8px;
+    padding: 8px 14px;
+    background: #1a0808;
+    border: 1px solid #3a1010;
+    border-radius: 8px;
+    font-size: 12px;
+    font-family: 'Geist Mono', monospace;
+    color: var(--red);
+  }
+  #error-bar.visible { display: block; }
+
+  /* ── Input area ── */
+  #input-area {
+    padding: 12px 24px 20px;
+    border-top: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+
+  #input-box {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 12px 14px;
+    transition: border-color 0.2s;
+  }
+  #input-box:focus-within { border-color: var(--green-dim); }
+
+  #input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'Geist', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: none;
+    max-height: 140px;
+    overflow-y: auto;
+    padding: 0;
+  }
+  #input::placeholder { color: var(--text-mute); }
+  #input::-webkit-scrollbar { width: 3px; }
+
+  #send-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: var(--green);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.15s, transform 0.1s, opacity 0.15s;
+  }
+  #send-btn:hover   { background: #00e0aa; }
+  #send-btn:active  { transform: scale(0.94); }
+  #send-btn:disabled { background: var(--bg4); opacity: 0.5; cursor: not-allowed; }
+
+  #send-btn svg { pointer-events: none; }
+
+  #hint {
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-mute);
+    margin-top: 8px;
+    font-family: 'Geist Mono', monospace;
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .spinner {
+    width: 12px; height: 12px;
+    border: 1.5px solid var(--border);
+    border-top-color: var(--green);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div id="header">
+    <div id="header-left">
+      <div id="logo">EN</div>
+      <div>
+        <div id="title">ENux AI</div>
+        <div id="subtitle">local · qwen2.5 · web-aware</div>
+      </div>
+    </div>
+    <div id="status">
+      <div id="status-dot"></div>
+      <span id="status-text">connecting...</span>
+    </div>
+  </div>
+
+  <!-- Messages -->
+  <div id="messages">
+    <div id="empty">
+      <div id="empty-logo">ENux</div>
+      <div id="empty-sub">
+        Ask anything about ENux Linux, Bedrock strata,
+        package management, or general Linux questions.
+      </div>
+      <div id="suggestions">
+        <button class="suggestion" onclick="suggest(this)">What is ENux?</button>
+        <button class="suggestion" onclick="suggest(this)">How does Bedrock Linux work?</button>
+        <button class="suggestion" onclick="suggest(this)">How do I install ENux?</button>
+        <button class="suggestion" onclick="suggest(this)">What's new in ENux 5.1.1?</button>
+        <button class="suggestion" onclick="suggest(this)">How do I add an Arch stratum?</button>
+        <button class="suggestion" onclick="suggest(this)">What is ENux-Standart?</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Search status -->
+  <div id="search-bar"></div>
+
+  <!-- Error bar -->
+  <div id="error-bar"></div>
+
+  <!-- Input -->
+  <div id="input-area">
+    <div id="input-box">
+      <textarea
+        id="input"
+        rows="1"
+        placeholder="Ask about ENux or Linux..."
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button id="send-btn" onclick="sendMessage()" disabled>
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+          <path d="M12 7L2 2L4.5 7L2 12L12 7Z" fill="#0c0e0d"/>
+        </svg>
+      </button>
+    </div>
+    <div id="hint">Enter to send &nbsp;·&nbsp; Shift+Enter for newline &nbsp;·&nbsp; ENux AI</div>
+  </div>
+
+</div>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+const history   = [];       // [{role, content}]
+let streaming   = false;
+let currentBubble = null;   // DOM element being streamed into
+let currentText   = "";     // raw markdown accumulating during stream
+
+// ── DOM refs ──────────────────────────────────────────────────────────────────
+const messagesEl  = document.getElementById("messages");
+const emptyEl     = document.getElementById("empty");
+const inputEl     = document.getElementById("input");
+const sendBtn     = document.getElementById("send-btn");
+const searchBar   = document.getElementById("search-bar");
+const errorBar    = document.getElementById("error-bar");
+const statusDot   = document.getElementById("status-dot");
+const statusText  = document.getElementById("status-text");
+
+// ── Health check on load ──────────────────────────────────────────────────────
+async function checkHealth() {
+  try {
+    const r = await fetch("/api/health");
+    const d = await r.json();
+    if (d.ok) {
+      statusDot.className  = "ok";
+      statusText.textContent = d.model + " · ready";
+      sendBtn.disabled = false;
+      inputEl.placeholder = "Ask about ENux or Linux...";
+    } else {
+      statusDot.className  = "err";
+      statusText.textContent = "offline";
+      showError(d.error);
+    }
+  } catch {
+    statusDot.className  = "err";
+    statusText.textContent = "offline";
+    showError("Cannot reach server. Is it running?");
+  }
+}
+
+// ── Minimal markdown renderer ─────────────────────────────────────────────────
+// Converts markdown text to safe HTML without any external library.
+function renderMarkdown(text) {
+  let html = text
+    // Escape HTML entities first
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    // Code blocks (```lang\n...\n```)
+    .replace(/```[\w]*\n?([\s\S]*?)```/g, (_, code) =>
+      `<pre><code>${code.trim()}</code></pre>`)
+    // Inline code
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    // Bold
+    .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+    // Italic
+    .replace(/\*(.+?)\*/g, "<em>$1</em>")
+    // Headers
+    .replace(/^### (.+)$/gm, "<h3>$1</h3>")
+    .replace(/^## (.+)$/gm,  "<h2>$1</h2>")
+    .replace(/^# (.+)$/gm,   "<h1>$1</h1>")
+    // Unordered lists
+    .replace(/^\s*[-*] (.+)$/gm, "<li>$1</li>")
+    .replace(/(<li>.*<\/li>)/s, "<ul>$1</ul>")
+    // Ordered lists
+    .replace(/^\d+\. (.+)$/gm, "<li>$1</li>")
+    // Newlines → paragraphs (only for non-block elements)
+    .replace(/\n{2,}/g, "</p><p>")
+    .replace(/\n/g, "<br>");
+
+  // Wrap in paragraph if no block elements
+  if (!html.includes("<pre>") && !html.includes("<ul>") && !html.includes("<h")) {
+    html = `<p>${html}</p>`;
+  }
+  return html;
+}
+
+// ── Create a message row ──────────────────────────────────────────────────────
+function createMessageRow(role) {
+  emptyEl.style.display = "none";
+
+  const row = document.createElement("div");
+  row.className = `msg-row ${role}`;
+
+  const avatar = document.createElement("div");
+  avatar.className = `avatar ${role === "user" ? "user" : "ai"}`;
+  avatar.textContent = role === "user" ? "~$" : "EN";
+
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
+
+  row.appendChild(avatar);
+  row.appendChild(bubble);
+  messagesEl.appendChild(row);
+  scrollBottom();
+
+  return bubble;
+}
+
+function scrollBottom() {
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+// ── Show / hide search bar ────────────────────────────────────────────────────
+function showSearchBar(sources) {
+  searchBar.innerHTML = "";
+  searchBar.className = "visible";
+
+  const spinner = document.createElement("div");
+  spinner.className = "spinner";
+  searchBar.appendChild(spinner);
+
+  const label = document.createElement("span");
+  label.textContent = "Searching ENux sources";
+  searchBar.appendChild(label);
+
+  if (sources) {
+    // Replace spinner with source dots
+    searchBar.innerHTML = sources.map(s =>
+      `<div class="search-source ${s.ok ? "ok" : "err"}">
+        <div class="dot"></div>
+        <span>${s.label}</span>
+      </div>`
+    ).join("");
+  }
+}
+
+function hideSearchBar() {
+  searchBar.className = "";
+  setTimeout(() => { searchBar.innerHTML = ""; }, 300);
+}
+
+// ── Error display ─────────────────────────────────────────────────────────────
+function showError(msg) {
+  errorBar.textContent = "✗ " + msg;
+  errorBar.className = "visible";
+  setTimeout(() => { errorBar.className = ""; }, 6000);
+}
+
+// ── Send message ──────────────────────────────────────────────────────────────
+async function sendMessage(overrideText) {
+  const text = (overrideText ?? inputEl.value).trim();
+  if (!text || streaming) return;
+
+  streaming = true;
+  sendBtn.disabled = true;
+  inputEl.value = "";
+  inputEl.style.height = "auto";
+  errorBar.className = "";
+
+  // Render user bubble
+  const userBubble = createMessageRow("user");
+  userBubble.innerHTML = renderMarkdown(text);
+  history.push({ role: "user", content: text });
+
+  // Prepare assistant bubble
+  currentBubble = createMessageRow("assistant");
+  currentBubble.innerHTML = '<span class="cursor"></span>';
+  currentText = "";
+
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: history }),
+    });
+
+    if (!res.ok) throw new Error(`Server error ${res.status}`);
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const parts = buffer.split("\n\n");
+      buffer = parts.pop() ?? "";
+
+      for (const part of parts) {
+        const lines = part.split("\n");
+        let event = "", data = "";
+        for (const line of lines) {
+          if (line.startsWith("event: ")) event = line.slice(7).trim();
+          if (line.startsWith("data: "))  data  = line.slice(6).trim();
+        }
+        if (!event || !data) continue;
+
+        try {
+          const payload = JSON.parse(data);
+
+          if (event === "search_start") {
+            showSearchBar(null);
+          }
+          else if (event === "search_done") {
+            showSearchBar(payload.sources);
+            // Hide after 3s
+            setTimeout(hideSearchBar, 3000);
+          }
+          else if (event === "search_error") {
+            hideSearchBar();
+            showError("Web search failed: " + payload.message);
+          }
+          else if (event === "token") {
+            currentText += payload.text;
+            // Re-render markdown + cursor as tokens arrive
+            currentBubble.innerHTML = renderMarkdown(currentText) + '<span class="cursor"></span>';
+            scrollBottom();
+          }
+          else if (event === "done") {
+            // Final render without cursor
+            currentBubble.innerHTML = renderMarkdown(currentText);
+            history.push({ role: "assistant", content: currentText });
+            currentBubble = null;
+            currentText = "";
+          }
+          else if (event === "error") {
+            currentBubble.innerHTML = `<span style="color:var(--red)">✗ ${payload.message}</span>`;
+            history.pop(); // remove user message if AI failed
+            showError(payload.message);
+          }
+        } catch {}
+      }
+    }
+
+  } catch (err) {
+    if (currentBubble) {
+      currentBubble.innerHTML = `<span style="color:var(--red)">✗ ${err.message}</span>`;
+    }
+    history.pop();
+    showError(err.message);
+  }
+
+  streaming = false;
+  sendBtn.disabled = false;
+  inputEl.focus();
+  hideSearchBar();
+}
+
+// ── Suggestion chips ──────────────────────────────────────────────────────────
+function suggest(btn) {
+  sendMessage(btn.textContent);
+}
+
+// ── Input helpers ─────────────────────────────────────────────────────────────
+function handleKey(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = "auto";
+  el.style.height = Math.min(el.scrollHeight, 140) + "px";
+  sendBtn.disabled = !el.value.trim() || streaming;
+}
+
+// Enable/disable send button as user types
+inputEl.addEventListener("input", () => {
+  sendBtn.disabled = !inputEl.value.trim() || streaming;
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+checkHealth();
+inputEl.focus();
+</script>
+</body>
+</html>
